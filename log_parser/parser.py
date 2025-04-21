@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 from typing import Optional
-
+from datetime import datetime
 from log_parser.abstract_parser import AbstractLogParser
 
 
@@ -126,7 +126,7 @@ class DjangoRequestLogParser(AbstractLogParser):
             `list`: Список HTTP-статуса ответа сервера
         """
         return [self.extract_pattern(log, self.RESPONSE) for log in logs]
-
+    
     def parse(self, filepath: Path) -> dict[str, list[Optional[str]]]:
         """## Алгоритм парсинга и поиска шаблонов в логах
         ### Args:
@@ -146,20 +146,26 @@ class DjangoRequestLogParser(AbstractLogParser):
             ```
         ! Все списки объектов одинаковой длины, означающей, что индекс каждого списка явялется одной записью лога
         """
+        print(f"Парсинг файла: {filepath}")
+        start_time = datetime.now()
         raw_logs = self.get_file_lines(filepath)
         filtered_logs = self.log_type_check(raw_logs)
         logger_statuses = self.get_logger_statuses(filtered_logs)
         methods = self.get_method(filtered_logs)
         sources = self.get_source_ip(filtered_logs)
-        datetime = self.get_datetime(filtered_logs)
+        log_datetime = self.get_datetime(filtered_logs)
         routes = self.get_routes(filtered_logs)
         responses = self.get_responses(filtered_logs)
         structured_logs = {
             "logger_statuses": logger_statuses,
             "methods": methods,
             "sources": sources,
-            "datetime": datetime,
+            "datetime": log_datetime,
             "routes": routes,
             "responses": responses
         }
+        print(
+            f"Парсинг файла {filepath} завершен.\n"
+            f"Время выполнения: {datetime.now() - start_time}"
+        )
         return structured_logs

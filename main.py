@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 from datetime import datetime
+from multiprocessing import Pool, cpu_count
 
 from log_parser.parser import DjangoRequestLogParser
 from report_formatter.report_formatter import ReportFormatter
@@ -18,6 +19,10 @@ def main(filenames: list[str], report_name: str = "Handler"):
 
     log_parser = DjangoRequestLogParser()
     report_formatter = ReportFormatter()
+    
+    print(f"Доступно CPU: {cpu_count()}")
+    with Pool(processes=cpu_count()) as pool:
+        structured_logs = pool.map(log_parser.parse, existing_files)
     structured_logs = [
         log_parser.parse(file_name) for file_name in existing_files
     ]

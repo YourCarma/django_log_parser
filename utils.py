@@ -18,6 +18,7 @@ def combine_dicts(dictionaries_to_combine: list[dict[str, list]]) -> dict:
     ### Returns:
         `dict`: Объединенный словарь с расширенным списком значений одного уровня
     """
+    print("Объединение словарей...")
     combined_logs = {}
     for k in dictionaries_to_combine[0]:
         combined_logs[k] = list(itertools.chain(*[d[k] for d in dictionaries_to_combine]))

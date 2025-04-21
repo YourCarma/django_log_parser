@@ -1,9 +1,11 @@
 from collections import defaultdict
-
+from datetime import datetime
 
 class ReportFormatter:
 
-    def group_by_count(self, group_object: list, objects_to_count: list, report_name: str = "handler",):
+    def group_by_count(self, group_object: list, objects_to_count: list, report_name: str = "handler"):
+        print("Формирование отчета...")
+        start_time = datetime.now()
         summary_stats = defaultdict(lambda: defaultdict(int))
         for route, status in zip(group_object, objects_to_count):
             summary_stats[route][status] += 1
@@ -34,6 +36,10 @@ class ReportFormatter:
             print(row)
         print(separator)
         print(f"Всего объектов: {len(group_object)}")
+        print(
+            "Формирование отчета завершено\n"
+            f"Время выполнения: {datetime.now() - start_time}"
+        )
 
     def header(self, head_name: str, max_group_object_width: int,
                column_names: list[str], column_widths: dict[str, int]) -> str:
